@@ -8,7 +8,7 @@ def luyThua(q, a):
 
 def find_number(q):
    arr = {}
-   for key in range (1, q - 1):
+   for key in range (2, q - 1):
       k = luyThua(q, key)
       if k != None:
          arr.update({key: k})

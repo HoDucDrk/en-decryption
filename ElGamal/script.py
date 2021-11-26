@@ -20,15 +20,13 @@ def keys(keys):
    file_writer("./keys/private_key.txt", "w+", keys[1])
 
 
-def encryption(msg, public_key):
+def encryption(msg, public_key, file_name):
    en = __init__.encrypt(msg, public_key)
-   file_name = input("Enter name file: ")
    file_writer("./ciphertext/" + file_name + ".txt", "wb+", __init__.convert_string_to_bytes(en[1]).encode("utf-8"))
    file_writer("./ciphertext/ciphertext.txt", "w+", str(en[0]))
 
-def decryption(en, keys):
+def decryption(en, keys, file_name):
    dec = __init__.decrypt(en, keys)
-   file_name = input("Enter name file: ")
    output = open(file_name + ".txt", "w+")
    output.write(dec)
 
@@ -37,23 +35,19 @@ def key_generation():
    var_keys = __init__.create_key(random_key_generation())
    keys(var_keys)
 
-def enc():
-   public_key = __init__.toInt(json.loads(open_file("./keys/public_key.txt")))
-   msg = open_file("input.txt")
-   print(public_key)
-   encryption(msg, public_key)
+def enc(path, file_name, key):
+   msg = open_file(path)
+   encryption(msg, key, file_name)
 # public_key, private_key = var_keys
 
 
-def dec():
+def dec(file_name, out_file):
    public_key = open_file("./keys/public_key.txt")
    private_key = open_file("./keys/private_key.txt")
    public_key = __init__.toInt(json.loads(public_key))
    c1 = open("./ciphertext/ciphertext.txt", "r").read()
-   c2 = __init__.reconvert(ciphertext_file("./ciphertext/test.txt"))
+   c2 = __init__.reconvert(ciphertext_file(file_name))
    en = int(c1), c2
    key = (public_key , int(private_key))
    print(key)
-   decryption(en, key)
-
-# enc()
+   decryption(en, key, out_file)

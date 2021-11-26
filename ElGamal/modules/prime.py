@@ -8,7 +8,7 @@ def isPrime(n):
    return True
 
 def prime():
-   n = 29999
+   n = 19999
    while True:
       x = random.randint(1, n)
       if(isPrime(x)):
