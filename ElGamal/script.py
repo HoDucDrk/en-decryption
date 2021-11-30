@@ -1,53 +1,45 @@
+import os
 import __init__
-import random
 import json
+import base64
+from io import BytesIO
+from PIL import Image
 
 open_file = __init__.open_file
 file_writer = __init__.file_writer
 
-def random_key_generation():
-   p = __init__.prime()
-   a = __init__.primordial_root(p)
-   return p, random.choice(a)
-
-def ciphertext_file(path):
-   file = open(path, "rb")
-   return bytes(file.read()).decode("utf-8")
-    
-def keys(keys):
-   key = str(keys[0]).replace('\'', '\"')
-   file_writer("./keys/public_key.txt", "w+", key)
-   file_writer("./keys/private_key.txt", "w+", keys[1])
-
-
-def encryption(msg, public_key, file_name):
-   en = __init__.encrypt(msg, public_key)
-   file_writer("./ciphertext/" + file_name + ".txt", "wb+", __init__.convert_string_to_bytes(en[1]).encode("utf-8"))
-   file_writer("./ciphertext/ciphertext.txt", "w+", str(en[0]))
-
-def decryption(en, keys, file_name):
-   dec = __init__.decrypt(en, keys)
-   output = open(file_name + ".txt", "w+")
-   output.write(dec)
-
-
 def key_generation():
-   var_keys = __init__.create_key(random_key_generation())
-   keys(var_keys)
+   var_keys = __init__.create_key(__init__.random_key_generation())
+   __init__.keys(var_keys)
 
-def enc(path, file_name, key):
-   msg = open_file(path)
-   encryption(msg, key, file_name)
-# public_key, private_key = var_keys
-
+def enc(path, file_name, key, mode):
+   if mode == 'p':
+      msg = encode_photo(path)
+   else:
+      msg = open_file(path)
+   __init__.encryption(msg, key, file_name)
 
 def dec(file_name, out_file):
    public_key = open_file("./keys/public_key.txt")
    private_key = open_file("./keys/private_key.txt")
    public_key = __init__.toInt(json.loads(public_key))
    c1 = open("./ciphertext/ciphertext.txt", "r").read()
-   c2 = __init__.reconvert(ciphertext_file(file_name))
+   c2 = __init__.reconvert(__init__.ciphertext_file(file_name))
    en = int(c1), c2
    key = (public_key , int(private_key))
    print(key)
-   decryption(en, key, out_file)
+   __init__.decryption(en, key, out_file)
+
+def encode_photo(path):
+   with open(path, 'rb') as photo_file:
+      encoded_photo = base64.b64encode(photo_file.read())
+   return encoded_photo.decode('utf-8')
+
+def decode_photo(path, file_name):
+   dec(path, file_name)
+   path_file = './' + file_name + '.txt'
+   t = open(path_file, 'r').read()
+   os.remove('./' + file_name + '.txt')
+   x = t.encode('utf-8')
+   im = Image.open(BytesIO(base64.b64decode(x)))
+   im.save(file_name + '.png', 'PNG')
