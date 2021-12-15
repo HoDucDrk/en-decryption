@@ -23,7 +23,7 @@ def dec(file_name, out_file):
    public_key = open_file("./keys/public_key.txt")
    private_key = open_file("./keys/private_key.txt")
    public_key = __init__.toInt(json.loads(public_key))
-   c1 = open("./ciphertext/ciphertext.txt", "r").read()
+   c1 = open("./ciphertext/controller/ciphertext.txt", "r").read()
    c2 = __init__.reconvert(__init__.ciphertext_file(file_name))
    en = int(c1), c2
    key = (public_key , int(private_key))

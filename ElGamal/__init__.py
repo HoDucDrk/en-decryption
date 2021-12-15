@@ -1,6 +1,6 @@
 from modules.create_key import create_key
 from modules.prime import prime
-from modules.prmordial_root import primordial_root
+from modules.primitive_roots import primitive_roots
 from modules.encryp import encrypt
 from modules.decryp import decrypt
 import random
@@ -23,7 +23,7 @@ def file_writer(path, mode, x):
    return file
 
 def open_file(path):
-   file = open(path)
+   file = open(path, encoding='utf8')
    return file.read()
 
 def toInt(dic):
@@ -34,7 +34,7 @@ def toInt(dic):
 
 def random_key_generation():
    p = prime()
-   a = primordial_root(p)
+   a = primitive_roots(p)
    return p, random.choice(a)
 
 def ciphertext_file(path):
@@ -43,12 +43,12 @@ def ciphertext_file(path):
 
 def encryption(msg, public_key, file_name):
    en = encrypt(msg, public_key)
-   file_writer("./ciphertext/" + file_name + ".txt", "wb+", convert_string_to_bytes(en[1]).encode("utf-8"))
-   file_writer("./ciphertext/ciphertext.txt", "w+", str(en[0]))
+   file_writer("./ciphertext/" + file_name + ".txt", "wb+", convert_string_to_bytes(en[1]).encode("utf-8", 'surrogateescape'))
+   file_writer("./ciphertext/controller/ciphertext.txt", "w+", str(en[0]))
 
 def decryption(en, keys, file_name):
    dec = decrypt(en, keys)
-   output = open(file_name + ".txt", "w+")
+   output = open(file_name + ".txt", "w+", encoding='utf-8')
    output.write(dec)
 
 def keys(keys):

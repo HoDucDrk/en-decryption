@@ -1,102 +1,143 @@
 from tkinter import *
-from tkinter.filedialog import askopenfile
+from tkinter.filedialog import askopenfilename
 from tkinter import filedialog
-import script as sp
+import script as s
 from tkinter import ttk
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageTk
 import os
 import json
 
-public_key = ''
+class Bob():
+   def __init__(self, master):
+      self.master = master
+      frame = ttk.Frame(master)
+      self.frame = frame
+      frame.grid()
+      my_canvas = Canvas(frame, width=300, height=1, bg='black')
+      self.selection_photo = False
+      self.file_path = StringVar()
+      self.file_path.set('')
+      self.public_key = ''
+      #title
+      ttk.Label(frame, text='Encryption', foreground='red').grid(row=0, column=0)
 
-selection_photo = False
+      #Button
+      get_key = ttk.Button(frame, text='Nhận khóa', command=self.private_key)
+      select_text = ttk.Button(frame, text='Văn bản', command=lambda: self.get_file_path(''))
+      select_photo = ttk.Button(frame, text='Ảnh', command=lambda: self.get_file_path('photo'))
+      open_file = ttk.Button(frame, text='Open file', command=self.open_file)
+      encode = ttk.Button(frame, text='Mã hóa', command=self.encd)
+      open_ciphertext = ttk.Button(frame, text='Open file', command=self.open_crip)
+      clear_window = ttk.Button(frame, text='Clear', command=self.clear)
 
-def getFilePath():
-   global selection_photo 
-   selection_photo = False
-   filetype = (
-      ('text files', '*.txt'),
-      ('All files', '*.*')
-   )
-   file_selected = filedialog.askopenfilename(filetypes=filetype)
-   filePath.set(file_selected)
+      #Label Configure
+      self.key_value = StringVar()
+      self.key_value.set('')
+      self.status_value = StringVar()
+      self.status_value.set('')
 
-def getFilePhotoPath():
-   global selection_photo
-   selection_photo = True
-   filetype = (
-      ('photo files', '*.png *jpg'),
-      ('All files', '*.*')
-   )
-   photo_selected = filedialog.askopenfilename(filetypes=filetype)
-   filePath.set(photo_selected)
+      #Label
+      display_key_value = ttk.Label(frame, textvariable=self.key_value)
+      ttk.Label(frame, text="Chọn").grid(row=2, column=0)
+      ttk.Label(frame, text="Path").grid(row=3, column=0)
+      label_rename = ttk.Label(frame, text='Đặt tên')
+      status = ttk.Label(frame, text='Status: ')
+      ttk.Label(frame, text="Bản rõ").grid(row=0, column=5)
+      ttk.Label(frame, text=" ").grid(row=0, column=4)
+      ttk.Label(frame, text="Bản mã").grid(row=0, column=10)
+      display_status_value = ttk.Label(frame, textvariable=self.status_value)
 
-def setFilePath():
-   file = filePath.get()
-   if selection_photo == True:
-      im = Image.open(file)
-      im.show()
-   else:
-      osCommandString = "notepad.exe " + file
-      os.system(osCommandString)
 
-def take_file_name():
-   print(t.get())
+      #Entry
+      entry_path = ttk.Entry(frame, textvariable=self.file_path, width=26)
+      self.entry_rename = ttk.Entry(frame, width=26)
+      self.entry_rename.insert(15, 'ma_hoa')
 
-def encd():
-   if filePath.get() != '':
-      try:
-         if selection_photo == True:
-            sp.enc(filePath.get(), t.get(), public_key, 'p')
-            open('./ciphertext/isPhoto.txt', 'w+')
-         else:
-            sp.enc(filePath.get(), t.get(), public_key, '')
-         Label(frm1, text="Thành công!", width=10).grid(column=3, row=10)
-      except:
-         Label(frm1, text="Lỗi! here", width=10).grid(column=3, row=10)
-   else: 
-      Label(frm1, text="Thất bại!", width=10).grid(column=3, row=10)
+      #text box
+      self.text_box_plan = Text(frame,  height=12, width=50)
+      self.text_box_crip = Text(frame,  height=12, width=50)
+      #Layout
+      get_key.grid(row=1, column=0)
+      display_key_value.grid(row=1, column=1, columnspan=2)
+      select_text.grid(row=2, column=1)
+      select_photo.grid(row=2, column=2)
+      entry_path.grid(row=3, column=1, columnspan=2)
+      open_file.grid(row=3, column=3)
+      label_rename.grid(row=4, column=0)
+      self.entry_rename.grid(row=4, column=1, columnspan=2)
+      self.text_box_plan.grid(row=1, column=5, columnspan=5, rowspan=5)
+      self.text_box_crip.grid(row=1, column=10, columnspan=5, rowspan=5)
+      encode.grid(row=5, column=0)
+      open_ciphertext.grid(row=5, column=1)
+      clear_window.grid(row=6, column=0)
+      status.grid(row=10, column=0)
+      display_status_value.grid(row=10, column=1, columnspan=2)
+      my_canvas.grid(row=11, column=0, columnspan=11)
 
-def open_crip():
-   file = "./ciphertext/" + t.get() + ".txt"
-   osCommandString = "notepad.exe " + file
-   os.system(osCommandString)
 
-def private_key():
-   global public_key
-   buttonClick = Path('./ciphertext/status.txt')
-   if buttonClick.is_file() == False: 
-      Label(frm1, text="Thất bại!").grid(column=2, row=0)
-   elif buttonClick.is_file() == True :
-      public_key = sp.__init__.toInt(json.loads(sp.open_file("./keys/public_key.txt")))
-      Label(frm1,text="Thanh cong!" ).grid(column=2, row=0)       
-      Label(frm1,text="p: " + str(public_key["q"]) + ", a: " + str(public_key["a"]) + ", y: " + str(public_key["y"])).grid(column=3, row=0)       
+   def private_key(self):
+      buttonClick = Path('./ciphertext/controller/status.txt')
+      if buttonClick.is_file() == False: 
+         self.key_value.set('Thất bại!')
+      elif buttonClick.is_file() == True :
+         self.public_key = s.__init__.toInt(json.loads(s.open_file("./keys/public_key.txt")))
+         self.key_value.set("p: " + str(self.public_key["q"]) + ", a: " + str(self.public_key["a"]) + ", y: " + str(self.public_key["y"]))
+         
+   def get_file_path(self, module):
+      if module == 'photo':
+         self.selection_photo = True
+         filetype = (
+            ('photo files', '*.png *jpg'),
+            ('All files', '*.*')
+         )
+         file_selected = askopenfilename(filetypes=filetype)
+      else:
+         self.selection_photo = False
+         filetype = (
+            ('file files', '*.txt'),
+            ('All files', '*.*')
+         )
+         file_selected = askopenfilename(filetypes=filetype)
+      self.file_path.set(file_selected)
 
-buttonClick = True
+   def open_file(self):
+      file = self.file_path.get()
+      if self.selection_photo == True:
+         img = Image.open(file)
+         img.show()
 
-from tkinter import filedialog
-import os
-b = Tk()
-b.title("Bob")
-frm1 = ttk.Frame(b, padding=10)
-frm1.grid()
-filePath = StringVar()
+   
+      else:
+         file = open(self.file_path.get(), "r", encoding='utf-8')
+         self.text_box_plan.insert('end', file.read())
 
-b.minsize(500, 200)
-Button(frm1, text="nhận khóa",width=10, command=private_key).grid(column=1, row=0)
-Entry(frm1, textvariable=filePath, width=30).grid(column=2, row=2, columnspan=2)
-Label(frm1, text="Nhập bản gốc",width=10).grid(column=1, row=1)
-Button(frm1, text="Văn bản", command=getFilePath).grid(column=2, row=1)
-Button(frm1, text="Hình ảnh", command=getFilePhotoPath).grid(column=3, row=1)
-Button(frm1, text="Open file",width=10, command=setFilePath).grid(column=1, row=2)
-t = ttk.Entry(frm1, width=30)
-t.insert(10, "mahoa")
-t.grid(column=2, row=3, columnspan=2)
-Button(frm1, text="Đặt tên", width=10, command=take_file_name).grid(column=1, row=3)
-Button(frm1, text="Mã hóa", width=10, command=encd).grid(column=1, row=4)
-Button(frm1, text="Mở file mã hóa", width=10, command=open_crip).grid(column=2, row=4)
-Button(frm1, text="Đóng",width=10, command=b.destroy).grid(column=1, row=5)
-Label(frm1, text="Status: ").grid(column=2, row=10)
-
-b.mainloop()
+   def encd(self):
+      if self.file_path.get() != '':
+         try:
+            if self.selection_photo == True:
+               s.enc(self.file_path.get(), self.entry_rename.get(), self.public_key, 'p')
+               open('./ciphertext/controller/isPhoto.txt', 'w+')
+            else:
+               s.enc(self.file_path.get(), self.entry_rename.get(), self.public_key, '')
+            self.status_value.set('Thành công!')
+         except:
+            self.status_value.set('Lỗi!')
+      else: 
+         self.status_value.set('Thất bại!')
+   
+   def open_crip(self):
+      file = open("./ciphertext/" + self.entry_rename.get() + ".txt", "r", encoding="utf-8")
+      def character_limit(entry_text):
+         if len(entry_text) > 0:
+            entry_text = entry_text[:10000]
+         return entry_text
+      text = character_limit(file.read())
+      self.text_box_crip.insert('end', text)
+   
+   def clear(self):
+      self.key_value.set('')
+      self.file_path.set('')
+      self.status_value.set('')
+      self.text_box_crip.delete('1.0', END)
+      self.text_box_plan.delete('1.0', END)
