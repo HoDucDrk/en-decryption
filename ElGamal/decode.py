@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askdirectory, askopenfilename
 from tkinter import filedialog
 import script as s
 from tkinter import ttk
@@ -10,15 +10,16 @@ import glob
 import json
 
 
-class Alice():
+class decode():
     def __init__(self, master):
         # configure
         self.master = master
         self.frame = ttk.Frame(master)
         frame = self.frame
         frame.grid()
-        my_canvas = Canvas(frame, width=300, height=1, bg='black')
+        my_canvas = Canvas(frame, width=500, height=1, bg='black')
         self.file_ciphertext = StringVar()
+        self.path_save_file = StringVar()
         self.buttonClick = False
         # title
         ttk.Label(frame, text='Decryption',
@@ -34,10 +35,13 @@ class Alice():
         open_plaintext = ttk.Button(
             frame, text='Mở bản rõ', command=self.open_dec)
         delete_file = ttk.Button(frame, text='Clear', command=self.clear)
+        select_path = ttk.Button(
+            frame, text='Save file', command=self.set_file_path)
         # Entry
-        path = ttk.Entry(frame, textvariable=self.file_ciphertext, width=27)
-        self.set_name = ttk.Entry(frame, width=12)
-        self.set_name.insert(15, 'ban_ro')
+        path = ttk.Entry(frame, textvariable=self.file_ciphertext, width=26)
+        self.path_set_file = ttk.Entry(frame, textvariable=self.path_save_file)
+        self.entry_rename = ttk.Entry(frame)
+        self.entry_rename.insert(15, 'ban_ro')
 
         # Label setting
         self.public_key_value = StringVar()
@@ -67,12 +71,14 @@ class Alice():
         self.text_box_plan.grid(row=1, column=10, columnspan=5, rowspan=5)
         select_ciphertext.grid(row=2, column=0)
         open_ciphertext.grid(row=2, column=3)
-        label_rename.grid(row=3, column=0)
-        self.set_name.grid(row=3, column=1)
+        select_path.grid(row=3, column=0)
+        label_rename.grid(row=3, column=2)
+        self.path_set_file.grid(row=3, column=1)
         decryption.grid(row=4, column=0)
         open_plaintext.grid(row=4, column=1)
         delete_file.grid(row=5, column=0)
         display_public_key.grid(row=1, column=2)
+        self.entry_rename.grid(row=3, column=3)
 
         path.grid(row=2, column=1, columnspan=2)
 
@@ -101,6 +107,9 @@ class Alice():
             ('All files', '*.*')
         )
         self.file_ciphertext.set(askopenfilename(filetypes=filetype))
+
+    def set_file_path(self):
+        self.path_save_file.set(askdirectory())
 
     def open_crip(self):
         file = self.file_ciphertext.get()
@@ -134,7 +143,7 @@ class Alice():
             self.status_value.set('Lỗi!')
 
     def decd(self):
-        file_name = self.set_name.get()
+        file_name = self.path_save_file.get() + '/' + self.entry_rename.get()
         check_photo = Path('./ciphertext/controller/isPhoto.txt')
         # try:
         if self.file_ciphertext.get() != '':
@@ -149,9 +158,10 @@ class Alice():
             # self.status_value.set('Lỗi!')
 
     def open_dec(self):
-        file = self.set_name.get()
+        file = self.entry_rename.get()
+        folder = self.path_save_file.get()
         if Path('./ciphertext/controller/isPhoto.txt').is_file() == True:
-            Image.open(file + '.png').show()
+            Image.open(folder + '/' + file + '.png').show()
         else:
-            plan = open(file + '.txt', "r", encoding='utf-8')
+            plan = open(folder + '/' + file + '.txt', "r", encoding='utf-8')
             self.text_box_plan.insert('end', plan.read())

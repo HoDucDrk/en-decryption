@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfilename, askdirectory
 from tkinter import filedialog
 import script as s
 from tkinter import ttk
@@ -8,15 +8,16 @@ from PIL import Image, ImageTk
 import os
 import json
 
-class Bob():
+class encode():
    def __init__(self, master):
       self.master = master
       frame = ttk.Frame(master)
       self.frame = frame
       frame.grid()
-      my_canvas = Canvas(frame, width=300, height=1, bg='black')
+      my_canvas = Canvas(frame, width=500, height=1, bg='black')
       self.selection_photo = False
       self.file_path = StringVar()
+      self.folder_path = StringVar()
       self.file_path.set('')
       self.public_key = ''
       #title
@@ -30,6 +31,7 @@ class Bob():
       encode = ttk.Button(frame, text='Mã hóa', command=self.encd)
       open_ciphertext = ttk.Button(frame, text='Open file', command=self.open_crip)
       clear_window = ttk.Button(frame, text='Clear', command=self.clear)
+      select_path = ttk.Button(frame, text="Select path", command=self.select_folder_path)
 
       #Label Configure
       self.key_value = StringVar()
@@ -50,9 +52,10 @@ class Bob():
 
 
       #Entry
-      entry_path = ttk.Entry(frame, textvariable=self.file_path, width=26)
-      self.entry_rename = ttk.Entry(frame, width=26)
-      self.entry_rename.insert(15, 'ma_hoa')
+      entry_path = ttk.Entry(frame, textvariable=self.file_path, width=27)
+      self.entry_folder_path = ttk.Entry(frame, textvariable=self.folder_path)
+      self.rename_file = ttk.Entry(frame, width=11)
+      self.rename_file.insert(15, 'ma_hoa')
 
       #text box
       self.text_box_plan = Text(frame,  height=12, width=50)
@@ -64,8 +67,10 @@ class Bob():
       select_photo.grid(row=2, column=2)
       entry_path.grid(row=3, column=1, columnspan=2)
       open_file.grid(row=3, column=3)
-      label_rename.grid(row=4, column=0)
-      self.entry_rename.grid(row=4, column=1, columnspan=2)
+      select_path.grid(row=4, column=0)
+      self.entry_folder_path.grid(row=4, column=1, columnspan=2)
+      label_rename.grid(row=4, column=3)
+      self.rename_file.grid(row=4, column=4)
       self.text_box_plan.grid(row=1, column=5, columnspan=5, rowspan=5)
       self.text_box_crip.grid(row=1, column=10, columnspan=5, rowspan=5)
       encode.grid(row=5, column=0)
@@ -75,6 +80,8 @@ class Bob():
       display_status_value.grid(row=10, column=1, columnspan=2)
       my_canvas.grid(row=11, column=0, columnspan=11)
 
+   def select_folder_path(self):
+      self.folder_path.set(askdirectory())
 
    def private_key(self):
       buttonClick = Path('./ciphertext/controller/status.txt')
@@ -113,13 +120,14 @@ class Bob():
          self.text_box_plan.insert('end', file.read())
 
    def encd(self):
+      file_path = self.folder_path.get() + "/" + self.rename_file.get()
       if self.file_path.get() != '':
          try:
             if self.selection_photo == True:
-               s.enc(self.file_path.get(), self.entry_rename.get(), self.public_key, 'p')
+               s.enc(self.file_path.get(), file_path, self.public_key, 'p')
                open('./ciphertext/controller/isPhoto.txt', 'w+')
             else:
-               s.enc(self.file_path.get(), self.entry_rename.get(), self.public_key, '')
+               s.enc(self.file_path.get(), file_path, self.public_key, '')
             self.status_value.set('Thành công!')
          except:
             self.status_value.set('Lỗi!')
@@ -127,7 +135,7 @@ class Bob():
          self.status_value.set('Thất bại!')
    
    def open_crip(self):
-      file = open("./ciphertext/" + self.entry_rename.get() + ".txt", "r", encoding="utf-8")
+      file = open( self.folder_path.get() + "/" + self.rename_file.get() + ".txt", "r", encoding="utf-8")
       def character_limit(entry_text):
          if len(entry_text) > 0:
             entry_text = entry_text[:10000]
@@ -141,3 +149,4 @@ class Bob():
       self.status_value.set('')
       self.text_box_crip.delete('1.0', END)
       self.text_box_plan.delete('1.0', END)
+      self.folder_path.set('')

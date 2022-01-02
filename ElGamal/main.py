@@ -1,5 +1,5 @@
-from Alice import Alice
-from Bob import Bob
+from decode import decode
+from encode import encode
 from tkinter import * 
 from tkinter import ttk
 
@@ -24,12 +24,12 @@ class MultiWindows():
    def alice_window(self):
       if self.alice_window_status == False:
          self.alice_window_status = True
-         Alice(self.frame)
+         decode(self.frame)
 
    def bob_window(self):
       if self.bob_window_status == False:
          self.bob_window_status = True
-         Bob(self.frame)
+         encode(self.frame)
 if __name__ == '__main__':
    root = Tk()
    root.title('Demo')

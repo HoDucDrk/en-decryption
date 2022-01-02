@@ -37,9 +37,9 @@ def encode_photo(path):
 
 def decode_photo(path, file_name):
    dec(path, file_name)
-   path_file = './' + file_name + '.txt'
+   path_file = file_name + '.txt'
    t = open(path_file, 'r').read()
-   os.remove('./' + file_name + '.txt')
+   os.remove(file_name + '.txt')
    x = t.encode('utf-8')
    im = Image.open(BytesIO(base64.b64decode(x)))
    im.save(file_name + '.png', 'PNG')

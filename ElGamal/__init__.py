@@ -43,7 +43,7 @@ def ciphertext_file(path):
 
 def encryption(msg, public_key, file_name):
    en = encrypt(msg, public_key)
-   file_writer("./ciphertext/" + file_name + ".txt", "wb+", convert_string_to_bytes(en[1]).encode("utf-8", 'surrogateescape'))
+   file_writer(file_name + ".txt", "wb+", convert_string_to_bytes(en[1]).encode("utf-8", 'surrogateescape'))
    file_writer("./ciphertext/controller/ciphertext.txt", "w+", str(en[0]))
 
 def decryption(en, keys, file_name):
