@@ -15,4 +15,4 @@ Cài base64:
 pip install pybase64
 ```
 
-Để folder ra desktop
+#### copy folder Elgamal ra Desktop
