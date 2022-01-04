@@ -124,9 +124,9 @@ class decode():
 
     def clear(self):
         try:
-            files = glob.glob("./ciphertext/controller/*")
+            files = glob.glob("./ciphertext/controller/*.txt")
             files_t = glob.glob("./ciphertext/*.txt")
-            files_key = glob.glob("./keys/*")
+            files_key = glob.glob("./keys/*.txt")
             for f in files:
                 os.remove(f)
             for f in files_t:

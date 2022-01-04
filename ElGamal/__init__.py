@@ -4,6 +4,7 @@ from modules.primitive_roots import primitive_roots
 from modules.encryp import encrypt
 from modules.decryp import decrypt
 import random
+import os
 
 def convert_string_to_bytes(x):
    k = "".join(list(chr(i) for i in x))
