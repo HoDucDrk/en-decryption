@@ -20,6 +20,7 @@ class encode():
       self.folder_path = StringVar()
       self.file_path.set('')
       self.public_key = ''
+      self.status_encryp = False
       #title
       ttk.Label(frame, text='Encryption', foreground='red').grid(row=0, column=0)
 
@@ -120,19 +121,21 @@ class encode():
          self.text_box_plan.insert('end', file.read())
 
    def encd(self):
-      file_path = self.folder_path.get() + "/" + self.rename_file.get()
-      if self.file_path.get() != '':
-         try:
-            if self.selection_photo == True:
-               s.enc(self.file_path.get(), file_path, self.public_key, 'p')
-               open('./ciphertext/controller/isPhoto.txt', 'w+')
-            else:
-               s.enc(self.file_path.get(), file_path, self.public_key, '')
-            self.status_value.set('Thành công!')
-         except:
-            self.status_value.set('Lỗi!')
-      else: 
-         self.status_value.set('Thất bại!')
+      if self.status_encryp == False:
+         file_path = self.folder_path.get() + "/" + self.rename_file.get()
+         if self.file_path.get() != '':
+            try:
+               if self.selection_photo == True:
+                  s.enc(self.file_path.get(), file_path, self.public_key, 'p')
+                  open('./ciphertext/controller/isPhoto.txt', 'w+')
+               else:
+                  s.enc(self.file_path.get(), file_path, self.public_key, '')
+               self.status_value.set('Thành công!')
+               self.status_encryp = True
+            except:
+               self.status_value.set('Lỗi! TryAgain!')
+         else: 
+            self.status_value.set('Thất bại!')
    
    def open_crip(self):
       file = open( self.folder_path.get() + "/" + self.rename_file.get() + ".txt", "r", encoding="utf-8")
@@ -150,3 +153,4 @@ class encode():
       self.text_box_crip.delete('1.0', END)
       self.text_box_plan.delete('1.0', END)
       self.folder_path.set('')
+      self.status_encryp = False
